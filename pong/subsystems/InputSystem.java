@@ -1,13 +1,11 @@
-package game1.subsystems;
+package pong.subsystems;
 
 import com.google.common.collect.Sets;
 import ecs.EntityManager;
 import ecs.SubSystem;
-import game1.components.Input;
-import game1.components.Velocity;
+import pong.components.Input;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;

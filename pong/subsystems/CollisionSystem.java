@@ -1,11 +1,11 @@
-package game1.subsystems;
+package pong.subsystems;
 
 import ecs.EntityManager;
 import ecs.NonExistentEntityException;
 import ecs.SubSystem;
-import game1.components.Input;
-import game1.components.Position;
-import game1.components.Velocity;
+import pong.components.Input;
+import pong.components.Position;
+import pong.components.Velocity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

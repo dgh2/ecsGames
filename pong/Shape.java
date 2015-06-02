@@ -1,7 +1,7 @@
-package game1;
+package pong;
 
-import game1.components.Position;
-import game1.components.Renderable;
+import pong.components.Position;
+import pong.components.Renderable;
 
 import java.awt.Graphics;
 

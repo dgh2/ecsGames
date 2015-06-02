@@ -1,4 +1,4 @@
-package game1.components;
+package pong.components;
 
 import ecs.Component;
 

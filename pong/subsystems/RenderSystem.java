@@ -1,10 +1,10 @@
-package game1.subsystems;
+package pong.subsystems;
 
 import ecs.EntityManager;
 import ecs.NonExistentEntityException;
 import ecs.SubSystem;
-import game1.components.Position;
-import game1.components.Renderable;
+import pong.components.Position;
+import pong.components.Renderable;
 
 import javax.swing.JPanel;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class RenderSystem extends JPanel implements SubSystem {
 
     public RenderSystem(EntityManager entityManager) {
         this.entityManager = entityManager;
-        setPreferredSize(new Dimension(250, 250));
+//        setPreferredSize(new Dimension(250, 250));
     }
 
     @Override

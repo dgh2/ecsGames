@@ -1,18 +1,17 @@
-package game1;
+package pong;
 
 import ecs.EntityManager;
 import ecs.NonExistentEntityException;
-import game1.components.Collidable;
-import game1.components.Input;
-import game1.components.Position;
-import game1.components.Renderable;
-import game1.components.Velocity;
-import game1.components.shapes.Circle;
-import game1.components.shapes.Rectangle;
-import game1.components.shapes.Text;
-import game1.subsystems.InputSystem;
-import game1.subsystems.PhysicsSystem;
-import game1.subsystems.RenderSystem;
+import pong.components.Input;
+import pong.components.Position;
+import pong.components.Renderable;
+import pong.components.Velocity;
+import pong.components.shapes.Circle;
+import pong.components.shapes.Rectangle;
+import pong.components.shapes.Text;
+import pong.subsystems.InputSystem;
+import pong.subsystems.PhysicsSystem;
+import pong.subsystems.RenderSystem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -22,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
-
 
 public class Main extends JFrame {
     private final JPanel jContentPane = new JPanel(new BorderLayout());
@@ -41,7 +39,7 @@ public class Main extends JFrame {
     private boolean gameRunning = true;
     private Renderable fpsLabelRenderable = new Renderable(1, new Text("FPS: ?"), Color.WHITE);
 
-    public static int WALL_BUFFER_SPACE = 0;
+    public static int WALL_BUFFER_SPACE = 10;
     public static double FPS_WEIGHT_RATIO = 0.9;
 
     public Main() {
@@ -101,32 +99,28 @@ public class Main extends JFrame {
             entityManager.addComponent(fpsLabel, new Position(50, 3));
             entityManager.addComponent(fpsLabel, fpsLabelRenderable);
             entityManager.addComponent(background, new Position(0, 0));
-            entityManager.addComponent(background, new Renderable(0, new Rectangle(getWidth(), getHeight()), Color.BLACK));
-            entityManager.addComponent(background, new Collidable());
+            entityManager.addComponent(background, new Renderable(0, new Rectangle(jContentPane.getWidth(), jContentPane.getHeight()), Color.BLACK));
             entityManager.addComponent(paddle1, new Velocity(0, 0, 0.66));
-            Renderable paddle1Renderable = new Renderable(1, new Rectangle(10, getHeight() * .1), Color.WHITE);
+            Renderable paddle1Renderable = new Renderable(1, new Rectangle(10, jContentPane.getHeight() * .1), Color.WHITE);
             entityManager.addComponent(paddle1, paddle1Renderable);
-            entityManager.addComponent(paddle1, new Collidable());
             entityManager.addComponent(paddle1,
                     new Position(WALL_BUFFER_SPACE,
-                            Math.round(getHeight() - ((Rectangle) paddle1Renderable.getShape()).getHeight()) / 2));
+                            Math.round(jContentPane.getHeight() - ((Rectangle) paddle1Renderable.getShape()).getHeight()) / 2));
             entityManager.addComponent(paddle1, new Input(.5));
             entityManager.addComponent(paddle2, new Velocity(0, 0, 0.66));
-            Renderable paddle2Renderable = new Renderable(1, new Rectangle(10, getHeight() * .1), Color.WHITE);
+            Renderable paddle2Renderable = new Renderable(1, new Rectangle(10, jContentPane.getHeight() * .1), Color.WHITE);
             entityManager.addComponent(paddle2, paddle2Renderable);
             entityManager.addComponent(paddle2,
-                    new Position(Math.round(getWidth() - ((Rectangle) paddle2Renderable.getShape()).getWidth() - WALL_BUFFER_SPACE),
-                            Math.round(getHeight() - ((Rectangle) paddle2Renderable.getShape()).getHeight()) / 2));
+                    new Position(Math.round(jContentPane.getWidth() - ((Rectangle) paddle2Renderable.getShape()).getWidth() - WALL_BUFFER_SPACE),
+                            Math.round(jContentPane.getHeight() - ((Rectangle) paddle2Renderable.getShape()).getHeight()) / 2));
             Renderable ballRenderable = new Renderable(2, new Circle(8), Color.WHITE);
             entityManager.addComponent(paddle2, new Input(.5));
-            entityManager.addComponent(paddle2, new Collidable());
             entityManager.addComponent(ball, ballRenderable);
-            entityManager.addComponent(ball,
-                    new Position(Math.round(Math.round((getWidth() - ((Circle) ballRenderable.getShape()).getDiameter()) / 2)),
-                            Math.round(Math.round(((getHeight() - ((Circle) ballRenderable.getShape()).getDiameter()) / 2)))));
+            Position ballPosition = new Position(Math.round(Math.round((jContentPane.getWidth() - ((Circle) ballRenderable.getShape()).getDiameter()) / 2)),
+                    Math.round(Math.round(((jContentPane.getHeight() - ((Circle) ballRenderable.getShape()).getDiameter()) / 2))));
+            entityManager.addComponent(ball, ballPosition);
             entityManager.addComponent(ball, new Velocity(random.nextInt(5) + 3,
-                    (random.nextInt(/*9*/0) + 45) * (random.nextBoolean() ? 1 : -1), 0.001));
-            entityManager.addComponent(ball, new Collidable());
+                    (random.nextBoolean() ? 0 : 180), 0.001));
         } catch (NonExistentEntityException e) {
             e.printStackTrace();
         }

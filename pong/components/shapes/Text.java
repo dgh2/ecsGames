@@ -1,8 +1,8 @@
-package game1.components.shapes;
+package pong.components.shapes;
 
-import game1.Shape;
-import game1.components.Position;
-import game1.components.Renderable;
+import pong.Shape;
+import pong.components.Position;
+import pong.components.Renderable;
 
 import java.awt.*;
 
