@@ -28,7 +28,7 @@ public class Main extends JFrame {
     private final EntityManager entityManager = new EntityManager();
     private final RenderSystem renderSystem = new RenderSystem(entityManager);
     private final PhysicsSystem physicsSystem = new PhysicsSystem();
-    private final InputSystem inputSystem = new InputSystem(jContentPane);
+    private final InputSystem inputSystem = new InputSystem(this);
 
     private UUID fpsLabel;
     private UUID background;
@@ -56,13 +56,13 @@ public class Main extends JFrame {
     }
 
     private void initializeInput() {
-        inputSystem.addControl('q', () -> handleInput(paddle1, 3, 0));
+        inputSystem.addControl('q', () -> handleInput(paddle1, 3, 90));
         inputSystem.duplicateControl('q', 'w', 'e', 'r');
-        inputSystem.addControl('a', () -> handleInput(paddle1, 3, 180));
+        inputSystem.addControl('a', () -> handleInput(paddle1, 3, 270));
         inputSystem.duplicateControl('a', 's', 'd', 'f');
-        inputSystem.addControl('u', () -> handleInput(paddle2, 3, 0));
+        inputSystem.addControl('u', () -> handleInput(paddle2, 3, 90));
         inputSystem.duplicateControl('u', 'i', 'o', 'p');
-        inputSystem.addControl('j', () -> handleInput(paddle2, 3, 180));
+        inputSystem.addControl('j', () -> handleInput(paddle2, 3, 270));
         inputSystem.duplicateControl('j', 'k', 'l', ';');
     }
 
