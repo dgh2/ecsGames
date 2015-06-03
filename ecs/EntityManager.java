@@ -26,6 +26,18 @@ public class EntityManager {
         return entity;
     }
 
+    public synchronized boolean addEntity(UUID entity) {
+        return allEntities.add(entity);
+    }
+
+    public synchronized boolean addEntity(UUID entity, String name) {
+        if (addEntity(entity)) {
+            entityNameMap.put(entity, name);
+            return true;
+        }
+        return false;
+    }
+
     public synchronized void killEntity(UUID entity) throws NonExistentEntityException {
         assertEntityExists(entity, "killEntity");
         removeEntityName(entity);

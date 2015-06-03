@@ -12,15 +12,16 @@ import pong.components.shapes.Text;
 import pong.subsystems.InputSystem;
 import pong.subsystems.PhysicsSystem;
 import pong.subsystems.RenderSystem;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.Random;
 import java.util.UUID;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import javax.swing.WindowConstants;
 
 public class Main extends JFrame {
     private final JPanel jContentPane = new JPanel(new BorderLayout());
@@ -56,13 +57,13 @@ public class Main extends JFrame {
     }
 
     private void initializeInput() {
-        inputSystem.addControl('q', () -> handleInput(paddle1, 3, 90));
+        inputSystem.addControl('q', () -> handleInput(paddle1, 3, 270));
         inputSystem.duplicateControl('q', 'w', 'e', 'r');
-        inputSystem.addControl('a', () -> handleInput(paddle1, 3, 270));
+        inputSystem.addControl('a', () -> handleInput(paddle1, 3, 90));
         inputSystem.duplicateControl('a', 's', 'd', 'f');
-        inputSystem.addControl('u', () -> handleInput(paddle2, 3, 90));
+        inputSystem.addControl('u', () -> handleInput(paddle2, 3, 270));
         inputSystem.duplicateControl('u', 'i', 'o', 'p');
-        inputSystem.addControl('j', () -> handleInput(paddle2, 3, 270));
+        inputSystem.addControl('j', () -> handleInput(paddle2, 3, 90));
         inputSystem.duplicateControl('j', 'k', 'l', ';');
     }
 

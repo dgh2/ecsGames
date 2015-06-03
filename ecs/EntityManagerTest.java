@@ -1,11 +1,10 @@
 package ecs;
 
+import org.junit.Test;
+
 import java.util.HashSet;
 import java.util.UUID;
-import org.junit.Test;
-import static org.junit.Assert.fail;
 
-@org.junit.Ignore
 public class EntityManagerTest {
     private static class TestComponent implements Component {}
     private static class TestComponent2 implements Component {}
@@ -25,6 +24,37 @@ public class EntityManagerTest {
 
     @Test
     public void testCreateEntityWithName() throws Exception {
+        EntityManager entityManager = new EntityManager();
+        UUID entity = UUID.randomUUID();
+        assert (!entityManager.getAllEntitiesSetDirectly().contains(entity));
+        entity = entityManager.createEntity("test");
+        assert (entityManager.getAllEntitiesSetDirectly().contains(entity));
+        assert (entityManager.getEntityComponentMapDirectly().isEmpty());
+        assert (entityManager.getComponentMapByClassDirectly().isEmpty());
+        assert (entityManager.getEntityNameMapDirectly().containsKey(entity));
+        assert (entityManager.getEntityNameMapDirectly().get(entity).equals("test"));
+    }
+
+    @Test
+    public void testAddEntity() throws Exception {
+        EntityManager entityManager1 = new EntityManager();
+        EntityManager entityManager2 = new EntityManager();
+        UUID entity = entityManager1.createEntity("entity");
+        assert (entityManager1.entityExists(entity));
+        assert (!entityManager2.entityExists(entity));
+        entityManager2.addEntity(entity, "entity′");
+        assert (entityManager1.entityExists(entity));
+        assert (entityManager2.entityExists(entity));
+        assert (entityManager1.getEntityName(entity).equals("entity"));
+        assert (entityManager2.getEntityName(entity).equals("entity′"));
+        entityManager1.killEntity(entity);
+        assert (!entityManager1.entityExists(entity));
+        assert (entityManager2.entityExists(entity));
+        assert (!entityManager2.addEntity(entityManager2.createEntity(), "new entity"));
+    }
+
+    @Test
+    public void testAddEntityWithName() throws Exception {
         EntityManager entityManager = new EntityManager();
         UUID entity = UUID.randomUUID();
         assert (!entityManager.getAllEntitiesSetDirectly().contains(entity));
@@ -247,7 +277,7 @@ public class EntityManagerTest {
     public void testAssertEntityExists() throws Exception {
         try {
             new EntityManager().assertEntityExists(UUID.randomUUID(), "testAssertEntityExists");
-            fail("Expected NonExistentEntityException");
+            org.junit.Assert.fail("Expected NonExistentEntityException");
         } catch (NonExistentEntityException expected) {/* test passed */ }
     }
 
