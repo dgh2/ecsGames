@@ -3,64 +3,84 @@ package pong2.subsystems;
 import com.google.common.collect.Sets;
 import ecs.EntityManager;
 import ecs.SubSystem;
-import pong2.components.Input;
+import java.awt.EventQueue;
 
-import javax.swing.JFrame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class InputSystem implements SubSystem {
-    private HashMap<Character, Runnable> keyMap = new HashMap<>();
+    private final HashMap<Character, Runnable> controlActions = new HashMap<>();
 
-    public InputSystem(JFrame jFrame) {
-        jFrame.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
-                if (keyMap.containsKey(e.getKeyChar())) {
-                    keyMap.get(e.getKeyChar()).run();
-                }
-            }
+    private HashSet<Character> keysDown = new HashSet<>();
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-                super.keyReleased(e);
+    public InputSystem() {}
+
+    public void start(RenderSystem renderSystem) {
+        EventQueue.invokeLater(() -> {
+            if (renderSystem.getGamePanel() != null) {
+                renderSystem.getGamePanel().addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        super.keyPressed(e);
+                        keysDown.add(e.getKeyChar());
+                    }
+
+                    @Override
+                    public void keyReleased(KeyEvent e) {
+                        super.keyReleased(e);
+                        keysDown.remove(e.getKeyChar());
+                    }
+                });
             }
         });
     }
 
     public boolean addControl(Character character, Runnable runnable) {
-        if (keyMap.containsKey(character)) {
-            return false;
+        synchronized (controlActions) {
+            if (controlActions.containsKey(character)) {
+                return false;
+            }
+            controlActions.put(character, runnable);
+            return true;
         }
-        keyMap.put(character, runnable);
-        return true;
     }
 
     public boolean duplicateControl(Character character, Character... characters) {
-        Runnable copyRunnable = keyMap.get(character);
         HashSet<Character> copyCharacters = Sets.newHashSet(characters);
-        if (copyRunnable == null || !Sets.intersection(keyMap.keySet(), copyCharacters).isEmpty()) {
-            return false;
+        if (controlActions.containsKey(character) && Sets.intersection(controlActions.keySet(), copyCharacters).isEmpty()) {
+            for (Character c : copyCharacters) {
+                controlActions.put(c, controlActions.get(character));
+            }
+            return true;
         }
-        for (Character ch : copyCharacters) {
-            keyMap.put(ch, copyRunnable);
+        return false;
+    }
+
+    public boolean removeControl(Character character) {
+        if (controlActions.containsKey(character)) {
+            controlActions.remove(character);
+            return true;
         }
-        return true;
+        return false;
     }
 
     public boolean removeControl(Character character, Runnable runnable) {
-        return keyMap.remove(character, runnable);
+        return controlActions.remove(character, runnable);
+    }
+
+    public boolean changeControl(Character characterFrom, Character characterTo) {
+        if (controlActions.containsKey(characterFrom) && !controlActions.containsKey(characterTo)) {
+            duplicateControl(characterFrom, characterTo);
+            removeControl(characterFrom);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void processOneGameTick(EntityManager entityManager, double lastFrameTime) {
-        HashMap<UUID, Input> entityInputMap = entityManager.getEntityComponentMapByClass(Input.class);
-        for (Input input : new HashSet<>(entityInputMap.values())) {
-            input.setForce(input.getForce() * (1 - input.getDecayRate()));
-        }
+        keysDown.stream().filter(controlActions::containsKey).forEach(key -> controlActions.get(key).run());
     }
 }

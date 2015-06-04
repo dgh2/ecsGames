@@ -3,11 +3,10 @@ package pong2.components;
 import ecs.Component;
 
 public class Velocity implements Component {
-    protected double magnitude, direction, decayRate;
-    public Velocity(double magnitude, double direction, double decayRate) {
+    protected double magnitude, direction;
+    public Velocity(double magnitude, double direction) {
         this.magnitude = magnitude;
         this.direction = direction;
-        this.decayRate = decayRate;
     }
 
     public double getMagnitude() {
@@ -26,16 +25,8 @@ public class Velocity implements Component {
         this.direction = direction;
     }
 
-    public double getDecayRate() {
-        return decayRate;
-    }
-
-    public void setDecayRate(double decayRate) {
-        this.decayRate = decayRate;
-    }
-
     @Override
     public String toString() {
-        return "(magnitude " + magnitude + " @ " + direction + " degrees, decaying at a rate of " + decayRate + ")";
+        return "(" + magnitude + " @ " + direction + " degrees)";
     }
 }

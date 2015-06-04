@@ -18,10 +18,10 @@ public class PhysicsSystem implements SubSystem {
         for (Map.Entry<UUID, Velocity> velocityEntity : entityVelocityMap.entrySet()) {
             Velocity velocity = velocityEntity.getValue();
             Position position = null;
-            Input input = null;
+//            Input input = null;
             try {
                 position = entityManager.getComponent(velocityEntity.getKey(), Position.class);
-                input = entityManager.getComponent(velocityEntity.getKey(), Input.class);
+//                input = entityManager.getComponent(velocityEntity.getKey(), Input.class);
             } catch (NonExistentEntityException e) {
                 e.printStackTrace();
             }
@@ -42,21 +42,21 @@ public class PhysicsSystem implements SubSystem {
             }
 
             //update velocity
-            velocity.setMagnitude(velocity.getMagnitude() * (1 - velocity.getDecayRate()));
-            if (input != null) {
-                if (velocity.getMagnitude() == 0) {
-                    velocity.setMagnitude(velocity.getMagnitude() + input.getForce());
-                    velocity.setDirection(input.getDirection());
-                } else if (input.getDirection() == velocity.getDirection()) {
-                    velocity.setMagnitude(velocity.getMagnitude() + input.getForce());
-                } else if (input.getDirection() == (360 - velocity.getDirection()) % 360) {
-                    velocity.setMagnitude(velocity.getMagnitude() - input.getForce());
-                }
-                if (velocity.getMagnitude() < 0) {
-                    velocity.setMagnitude(-1 * velocity.getMagnitude());
-                    velocity.setDirection((360 - velocity.getDirection()) % 360);
-                }
-            }
+//            velocity.setMagnitude(velocity.getMagnitude() * (1 - velocity.getDecayRate()));
+//            if (input != null) {
+//                if (velocity.getMagnitude() == 0) {
+//                    velocity.setMagnitude(velocity.getMagnitude() + input.getForce());
+//                    velocity.setDirection(input.getDirection());
+//                } else if (input.getDirection() == velocity.getDirection()) {
+//                    velocity.setMagnitude(velocity.getMagnitude() + input.getForce());
+//                } else if (input.getDirection() == (360 - velocity.getDirection()) % 360) {
+//                    velocity.setMagnitude(velocity.getMagnitude() - input.getForce());
+//                }
+//                if (velocity.getMagnitude() < 0) {
+//                    velocity.setMagnitude(-1 * velocity.getMagnitude());
+//                    velocity.setDirection((360 - velocity.getDirection()) % 360);
+//                }
+//            }
         }
     }
 }
