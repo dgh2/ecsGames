@@ -1,35 +1,27 @@
 package pong2;
 
 import ecs.EntityManager;
-import ecs.NonExistentEntityException;
-import pong2.components.Renderable;
-import pong2.components.renderables.Text;
+import pong2.subsystems.InputSystem;
 import pong2.subsystems.RenderSystem;
 
 import javax.swing.JFrame;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.geom.Point2D;
-import java.util.UUID;
 
 public class Main extends JFrame {
 
     private final EntityManager entityManager = new EntityManager();
     private final RenderSystem renderSystem = new RenderSystem(entityManager);
 //    private final PhysicsSystem physicsSystem = new PhysicsSystem();
-//    private final InputSystem inputSystem = new InputSystem(this);
+    private final InputSystem inputSystem = new InputSystem();
 
     private static final int TARGET_FPS = 60;
     private static final double OPTIMAL_TIME = 1000000 / TARGET_FPS;
 
-    private UUID fpsLabelEntity;
 //    private UUID background;
 //    private UUID paddle1;
 //    private UUID paddle2;
 //    private UUID ball;
 
     private boolean gameRunning = true;
-    private Text fpsLabel = new Text(new Point2D.Double(2, 0), "FPS: ?", Color.BLACK, new Font("Arial", Font.PLAIN, 10));
 
 //    public static int WALL_BUFFER_SPACE = 10;
     public static double FPS_WEIGHT_RATIO = 0.9;
@@ -43,7 +35,6 @@ public class Main extends JFrame {
         renderSystem.start();
         inputSystem.start(renderSystem);
         initializeGame();
-        initializeInput();
         startGameloop();
     }
 
@@ -84,15 +75,12 @@ public class Main extends JFrame {
     }
 
     private void initializeGame() {
-        fpsLabel = entityManager.createEntity("fpsLabel");
         background = entityManager.createEntity("background");
         paddle1 = entityManager.createEntity("paddle1");
         paddle2 = entityManager.createEntity("paddle2");
         ball = entityManager.createEntity("ball");
         Random random = new Random();
         try {
-            entityManager.addComponent(fpsLabel, new Position(50, 3));
-            entityManager.addComponent(fpsLabel, fpsLabelRenderable);
             entityManager.addComponent(background, new Position(0, 0));
             entityManager.addComponent(background, new Renderable(0, new Rectangle(jContentPane.getWidth(), jContentPane.getHeight()), Color.BLACK));
             entityManager.addComponent(paddle1, new Velocity(0, 0, 0.66));
@@ -123,13 +111,10 @@ public class Main extends JFrame {
     }*/
 
     private void initializeGame() {
-        try {
-            fpsLabelEntity = entityManager.createEntity("fpsLabel");
-            entityManager.addComponent(fpsLabelEntity, new Renderable(fpsLabel));
-        } catch (NonExistentEntityException e) {
-            e.printStackTrace();
-        }
-        startGameloop();
+//        try {
+//        } catch (NonExistentEntityException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void processOneGameTick(double lastFrameTime) {
@@ -158,7 +143,7 @@ public class Main extends JFrame {
             avgFps = Math.floor(1000000000 / ((updateLength * (1.0 - FPS_WEIGHT_RATIO)) + (previousUpdateLength * FPS_WEIGHT_RATIO)));
             previousUpdateLength = updateLength;
 
-            fpsLabel.setText("FPS: " + Math.round(avgFps));
+            renderSystem.setFPS(avgFps);
 
             // update the game logic
             processOneGameTick(delta);

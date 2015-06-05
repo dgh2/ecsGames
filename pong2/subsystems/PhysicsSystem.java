@@ -3,7 +3,6 @@ package pong2.subsystems;
 import ecs.EntityManager;
 import ecs.NonExistentEntityException;
 import ecs.SubSystem;
-import pong2.components.Input;
 import pong2.components.Position;
 import pong2.components.Velocity;
 

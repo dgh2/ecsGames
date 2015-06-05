@@ -5,22 +5,20 @@ import ecs.NonExistentEntityException;
 import ecs.SubSystem;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 import java.lang.reflect.InvocationTargetException;
-import java.util.UUID;
-import pong2.components.renderableShape.Text;
+import pong2.components.Renderable;
+import pong2.components.renderables.Text;
 import pong2.gui.GameFrame;
 
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import pong2.gui.GamePanel;
-import java.lang.reflect.InvocationTargetException;
 
 public class RenderSystem implements SubSystem {
     private GameFrame gameFrame = null;
     private EntityManager entityManager;
-    private Text fpsLabel = new Text(2, 10, "FPS: ?", Color.BLACK, new Font("Arial", Font.PLAIN, 10));
+    private Text fpsLabel = new Text(new Point2D.Double(2, 2), "FPS: ?", Color.BLACK, new Font("Arial", Font.PLAIN, 10));
 //    public static double FPS_WEIGHT_RATIO = 0.7;
 
     public RenderSystem(EntityManager entityManager) {
@@ -35,7 +33,7 @@ public class RenderSystem implements SubSystem {
     public void start() {
         EventQueue.invokeLater(() -> {
             try {
-                entityManager.addComponent(entityManager.createEntity("fpsLabel"), fpsLabel);
+                entityManager.addComponent(entityManager.createEntity("fpsLabel"), new Renderable(fpsLabel));
             } catch (NonExistentEntityException e) {
                 e.printStackTrace();
             }
@@ -56,6 +54,10 @@ public class RenderSystem implements SubSystem {
             return (GamePanel) gameFrame.getContentPane();
         }
         return null;
+    }
+
+    public void setFPS(double avgFps) {
+        fpsLabel.setText("FPS: " + Math.round(Math.round(Math.floor(avgFps))));
     }
 
     @Override
