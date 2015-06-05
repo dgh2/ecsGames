@@ -3,7 +3,6 @@ package pong2.subsystems;
 import com.google.common.collect.Sets;
 import ecs.EntityManager;
 import ecs.SubSystem;
-import java.awt.EventQueue;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

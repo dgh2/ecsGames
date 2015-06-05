@@ -15,6 +15,7 @@ import pong2.gui.GameFrame;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import pong2.gui.GamePanel;
+import java.lang.reflect.InvocationTargetException;
 
 public class RenderSystem implements SubSystem {
     private GameFrame gameFrame = null;
@@ -25,9 +26,7 @@ public class RenderSystem implements SubSystem {
     public RenderSystem(EntityManager entityManager) {
         this.entityManager = entityManager;
         try {
-            EventQueue.invokeAndWait(() -> {
-                gameFrame = new GameFrame(entityManager);
-            });
+            EventQueue.invokeAndWait(() -> gameFrame = new GameFrame(entityManager));
         } catch (InterruptedException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -62,12 +61,6 @@ public class RenderSystem implements SubSystem {
     @Override
     public void processOneGameTick(EntityManager entityManager, double lastFrameTime) {
         if (gameFrame != null) {
-//            double avgFPS = ((1000000000 / lastFrameTime) * FPS_WEIGHT_RATIO) + (previousFPS * (1 - FPS_WEIGHT_RATIO));
-//            previousFPS = avgFPS;
-//            System.out.println(avgFPS);
-//            fpsLabel.setText("FPS: " + Math.round(Math.floor(avgFPS)));
-//            System.out.println("lastFrameTime: " + lastFrameTime);
-//            fpsLabel.setText("FPS: " + Math.round(Math.floor(1000000000 / lastFrameTime)));
             EventQueue.invokeLater(gameFrame::repaint);
         }
     }
