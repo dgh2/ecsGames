@@ -139,15 +139,7 @@ public class Main extends JFrame {
             avgFps = Math.floor(1000000000 / ((updateLength * (1.0 - FPS_WEIGHT_RATIO)) + (previousUpdateLength * FPS_WEIGHT_RATIO)));
             previousUpdateLength = updateLength;
 
-            if (fpsLabelEntity != null) {
-                fpsLabel.setText("FPS: " + Math.round(avgFps));
-                try {
-                    Renderable renderable = entityManager.getComponent(fpsLabelEntity, Renderable.class);
-                    renderable.getObjectClass().cast(renderable.getObject());
-                } catch (NonExistentEntityException e) {
-                    e.printStackTrace();
-                }
-            }
+            fpsLabel.setText("FPS: " + Math.round(avgFps));
 
             // update the game logic
             processOneGameTick(delta);
