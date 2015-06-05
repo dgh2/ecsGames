@@ -3,14 +3,12 @@ package pong2.subsystems;
 import com.google.common.collect.Sets;
 import ecs.EntityManager;
 import ecs.SubSystem;
-import pong2.components.Input;
 
 import javax.swing.JFrame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class InputSystem implements SubSystem {
     private HashMap<Character, Runnable> keyMap = new HashMap<>();
@@ -58,9 +56,9 @@ public class InputSystem implements SubSystem {
 
     @Override
     public void processOneGameTick(EntityManager entityManager, double lastFrameTime) {
-        HashMap<UUID, Input> entityInputMap = entityManager.getEntityComponentMapByClass(Input.class);
-        for (Input input : new HashSet<>(entityInputMap.values())) {
-            input.setForce(input.getForce() * (1 - input.getDecayRate()));
-        }
+//        HashMap<UUID, Input> entityInputMap = entityManager.getEntityComponentMapByClass(Input.class);
+//        for (Input input : new HashSet<>(entityInputMap.values())) {
+//            input.setForce(input.getForce() * (1 - input.getDecayRate()));
+//        }
     }
 }

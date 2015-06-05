@@ -2,44 +2,33 @@ package pong2;
 
 import ecs.EntityManager;
 import ecs.NonExistentEntityException;
-import pong2.components.shapes.Circle;
-import pong2.components.shapes.Text;
-import pong2.components.Input;
-import pong2.components.Position;
 import pong2.components.Renderable;
-import pong2.components.Velocity;
-import pong2.components.shapes.Rectangle;
-import pong2.subsystems.InputSystem;
-import pong2.subsystems.PhysicsSystem;
+import pong2.components.renderables.Text;
 import pong2.subsystems.RenderSystem;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import javax.swing.WindowConstants;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
-import java.util.Random;
+import java.awt.Font;
+import java.awt.geom.Point2D;
 import java.util.UUID;
 
 public class Main extends JFrame {
 
     private final EntityManager entityManager = new EntityManager();
     private final RenderSystem renderSystem = new RenderSystem(entityManager);
-    private final PhysicsSystem physicsSystem = new PhysicsSystem();
-    private final InputSystem inputSystem = new InputSystem(this);
+//    private final PhysicsSystem physicsSystem = new PhysicsSystem();
+//    private final InputSystem inputSystem = new InputSystem(this);
 
-    private UUID fpsLabel;
-    private UUID background;
-    private UUID paddle1;
-    private UUID paddle2;
-    private UUID ball;
+    private UUID fpsLabelEntity;
+//    private UUID background;
+//    private UUID paddle1;
+//    private UUID paddle2;
+//    private UUID ball;
 
     private boolean gameRunning = true;
-    private Renderable fpsLabelRenderable = new Renderable(1, new Text("FPS: ?"), Color.WHITE);
+    private Text fpsLabel = new Text(new Point2D.Double(2, 0), "FPS: ?", Color.BLACK, new Font("Arial", Font.PLAIN, 10));
 
-    public static int WALL_BUFFER_SPACE = 10;
+//    public static int WALL_BUFFER_SPACE = 10;
     public static double FPS_WEIGHT_RATIO = 0.9;
 
     public static void main(String[] args) {
@@ -48,10 +37,12 @@ public class Main extends JFrame {
 
     public Main() {
         super();
-        initializeInput();
+        renderSystem.start();
+//        initializeInput();
         initializeGame();
     }
 
+    /*
     private void initializeInput() {
         inputSystem.addControl('q', () -> handleInput(paddle1, 3, 270));
         inputSystem.duplicateControl('q', 'w', 'e', 'r');
@@ -110,12 +101,22 @@ public class Main extends JFrame {
             e.printStackTrace();
         }
         startGameloop();
+    }*/
+
+    private void initializeGame() {
+        try {
+            fpsLabelEntity = entityManager.createEntity("fpsLabel");
+            entityManager.addComponent(fpsLabelEntity, new Renderable(fpsLabel));
+        } catch (NonExistentEntityException e) {
+            e.printStackTrace();
+        }
+        startGameloop();
     }
 
     public void processOneGameTick(double lastFrameTime) {
-        physicsSystem.processOneGameTick(entityManager, lastFrameTime);
+//        physicsSystem.processOneGameTick(entityManager, lastFrameTime);
         renderSystem.processOneGameTick(entityManager, lastFrameTime);
-        inputSystem.processOneGameTick(entityManager, lastFrameTime);
+//        inputSystem.processOneGameTick(entityManager, lastFrameTime);
     }
 
     private void startGameloop() {
@@ -138,7 +139,15 @@ public class Main extends JFrame {
             avgFps = Math.floor(1000000000 / ((updateLength * (1.0 - FPS_WEIGHT_RATIO)) + (previousUpdateLength * FPS_WEIGHT_RATIO)));
             previousUpdateLength = updateLength;
 
-            ((Text) fpsLabelRenderable.getShape()).setText("FPS: " + Math.round(avgFps));
+            if (fpsLabelEntity != null) {
+                fpsLabel.setText("FPS: " + Math.round(avgFps));
+                try {
+                    Renderable renderable = entityManager.getComponent(fpsLabelEntity, Renderable.class);
+                    renderable.getObjectClass().cast(renderable.getObject());
+                } catch (NonExistentEntityException e) {
+                    e.printStackTrace();
+                }
+            }
 
             // update the game logic
             processOneGameTick(delta);
@@ -155,5 +164,6 @@ public class Main extends JFrame {
                 e.printStackTrace();
             }
         }
+        renderSystem.stop();
     }
 }

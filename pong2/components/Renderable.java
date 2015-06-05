@@ -1,42 +1,39 @@
 package pong2.components;
 
 import ecs.Component;
+import pong2.components.renderables.abstracts.RenderableObject;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Shape;
 
 public class Renderable implements Component {
-    private Shape shape;
-    private Color color;
+    private RenderableObject renderableObject;
+    private Class<? extends RenderableObject> objectClass;
 
-    public Renderable(Shape shape, Color color) {
-        this.shape = shape;
-        this.color = color;
+    public <T extends RenderableObject> Renderable(T renderableObject) {
+        this.renderableObject = renderableObject;
+        this.objectClass = renderableObject.getClass();
     }
 
-    public Shape getShape() {
-        return shape;
+    public RenderableObject getObject() {
+        return renderableObject;
     }
 
-    public void setShape(Shape shape) {
-        this.shape = shape;
+    @SuppressWarnings("unchecked")
+    public <T extends RenderableObject> Class<T> getObjectClass() {
+        return (Class<T>) objectClass;
     }
 
-    public Color getColor() {
-        return color;
+    public <T extends RenderableObject> void set(T renderableObject) {
+        this.renderableObject = renderableObject;
+        this.objectClass = renderableObject.getClass();
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void draw(Graphics graphics, Position position) {
-//        shape.draw(graphics, position, this);
+    public void draw(Graphics graphics) {
+        renderableObject.draw(graphics);
     }
 
     @Override
     public String toString() {
-        return color + " " + shape.;
+        return renderableObject.toString();
     }
 }

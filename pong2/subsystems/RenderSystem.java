@@ -6,17 +6,21 @@ import pong2.gui.GameFrame;
 
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 
 public class RenderSystem implements SubSystem {
-    private GameFrame gameFrame = null;
-    private EntityManager entityManager;
+    private GameFrame gameFrame;
 
-    public RenderSystem(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public RenderSystem(final EntityManager entityManager) {
+        try {
+            EventQueue.invokeAndWait(() -> gameFrame = new GameFrame(entityManager));
+        } catch (InterruptedException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     public void start() {
-        EventQueue.invokeLater(() -> gameFrame = new GameFrame(entityManager));
+        EventQueue.invokeLater(() -> gameFrame.setVisible(true));
     }
 
     public void stop() {
