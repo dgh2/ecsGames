@@ -1,14 +1,15 @@
 package pong2.gui;
 
 import ecs.EntityManager;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import pong2.components.Renderable;
 
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.Map;
-import java.util.UUID;
 
 public class GamePanel extends JPanel {
     private EntityManager entityManager;
@@ -16,6 +17,8 @@ public class GamePanel extends JPanel {
 
     public GamePanel(EntityManager entityManager) {
         this.entityManager = entityManager;
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     public boolean getAntiAliasing() {
@@ -28,16 +31,19 @@ public class GamePanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics graphics) {
+        Graphics2D graphics2D = Graphics2D.class.cast(graphics);
         super.paintComponent(graphics);
         if (antiAliasing) {
-            Graphics2D.class.cast(graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+            graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            Graphics2D.class.cast(graphics).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+            graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                     RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         }
 
-        for (Map.Entry<UUID, Renderable> renderableEntity : entityManager.getEntityComponentMapByClass(Renderable.class).entrySet()) {
-            renderableEntity.getValue().draw(graphics);
+        LinkedList<Renderable> renderables = new LinkedList<>(entityManager.getEntityComponentMapByClass(Renderable.class).values());
+        Collections.sort(renderables);
+        for (Renderable renderable : renderables) {
+            renderable.draw(graphics2D);
         }
     }
 }

@@ -1,5 +1,8 @@
 package pong2.components.renderables;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import pong2.components.renderables.abstracts.RenderableObject;
 
 import java.awt.Color;
@@ -26,8 +29,9 @@ public class Circle extends RenderableObject {
     public void draw(Graphics graphics) {
         Color initialColor = graphics.getColor();
         graphics.setColor(color);
-        graphics.fillOval(Math.round(Math.round(point.getX())), Math.round(Math.round(point.getY())),
-                Math.round(Math.round(diameter)), Math.round(Math.round(diameter)));
+        Ellipse2D.Double shape = new Ellipse2D.Double(point.getX(), point.getY(), diameter, diameter);
+        ((Graphics2D) graphics).draw(shape);
+        ((Graphics2D) graphics).fill(shape);
         graphics.setColor(initialColor);
     }
 

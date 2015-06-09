@@ -7,6 +7,7 @@ import ecs.SubSystem;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -15,26 +16,28 @@ public class InputSystem implements SubSystem {
 
     private HashSet<Character> keysDown = new HashSet<>();
 
-    public InputSystem() {}
+    public InputSystem(RenderSystem renderSystem) {
+        try {
+            EventQueue.invokeAndWait(() -> {
+                if (renderSystem.getGamePanel() != null) {
+                    renderSystem.getGamePanel().addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+                            super.keyPressed(e);
+                            keysDown.add(e.getKeyChar());
+                        }
 
-    public void start(RenderSystem renderSystem) {
-        EventQueue.invokeLater(() -> {
-            if (renderSystem.getGamePanel() != null) {
-                renderSystem.getGamePanel().addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        super.keyPressed(e);
-                        keysDown.add(e.getKeyChar());
-                    }
-
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                        super.keyReleased(e);
-                        keysDown.remove(e.getKeyChar());
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void keyReleased(KeyEvent e) {
+                            super.keyReleased(e);
+                            keysDown.remove(e.getKeyChar());
+                        }
+                    });
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean addControl(Character character, Runnable runnable) {

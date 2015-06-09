@@ -1,5 +1,7 @@
 package pong2.components.renderables;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import pong2.components.renderables.abstracts.RenderableObject;
 
 import java.awt.Color;
@@ -35,8 +37,9 @@ public class Rectangle extends RenderableObject {
     public void draw(Graphics graphics) {
         Color initialColor = graphics.getColor();
         graphics.setColor(color);
-        graphics.fillRect(Math.round(Math.round(point.getX())), Math.round(Math.round(point.getY())),
-                Math.round(Math.round(width)), Math.round(Math.round(height)));
+        Rectangle2D.Double shape = new Rectangle2D.Double(point.getX(), point.getY(), width, height);
+        ((Graphics2D) graphics).draw(shape);
+        ((Graphics2D) graphics).fill(shape);
         graphics.setColor(initialColor);
     }
 
