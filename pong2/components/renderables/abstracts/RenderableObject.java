@@ -2,7 +2,10 @@ package pong2.components.renderables.abstracts;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 public abstract class RenderableObject {
     protected Point2D.Double point;
@@ -30,5 +33,6 @@ public abstract class RenderableObject {
     }
 
     public abstract void draw(Graphics graphics);
+
     public abstract String toString();
 }

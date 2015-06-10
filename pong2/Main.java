@@ -6,11 +6,11 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Random;
 import java.util.UUID;
-import pong2.components.Input;
 import pong2.components.Physics;
 import pong2.components.Renderable;
 import pong2.components.renderables.Circle;
 import pong2.components.renderables.Rectangle;
+import pong2.subsystems.CollisionSystem;
 import pong2.subsystems.InputSystem;
 import pong2.subsystems.PhysicsSystem;
 import pong2.subsystems.RenderSystem;
@@ -23,6 +23,7 @@ public class Main extends JFrame {
     private final EntityManager entityManager = new EntityManager();
     private final RenderSystem renderSystem = new RenderSystem(entityManager);
     private final PhysicsSystem physicsSystem = new PhysicsSystem();
+    private final CollisionSystem collisionSystem = new CollisionSystem();
     private final InputSystem inputSystem = new InputSystem(renderSystem);
 
     private static final int TARGET_FPS = 60;
@@ -50,7 +51,7 @@ public class Main extends JFrame {
     private void initializeInput() {
         inputSystem.addControl('q', () -> {
             try {
-                entityManager.getComponent(paddle1, Input.class).setDirection(270);
+                entityManager.getComponent(paddle1, Physics.class).addForce(new Point2D.Double(0, -1));
             } catch (NonExistentEntityException e) {
                 e.printStackTrace();
             }
@@ -58,7 +59,7 @@ public class Main extends JFrame {
         inputSystem.duplicateControl('q', 'w', 'e', 'r');
         inputSystem.addControl('a', () -> {
             try {
-                entityManager.getComponent(paddle1, Input.class).setDirection(90);
+                entityManager.getComponent(paddle1, Physics.class).addForce(new Point2D.Double(0, 1));
             } catch (NonExistentEntityException e) {
                 e.printStackTrace();
             }
@@ -66,7 +67,7 @@ public class Main extends JFrame {
         inputSystem.duplicateControl('a', 's', 'd', 'f');
         inputSystem.addControl('u', () -> {
             try {
-                entityManager.getComponent(paddle2, Input.class).setDirection(270);
+                entityManager.getComponent(paddle2, Physics.class).addForce(new Point2D.Double(0, -1));
             } catch (NonExistentEntityException e) {
                 e.printStackTrace();
             }
@@ -74,7 +75,7 @@ public class Main extends JFrame {
         inputSystem.duplicateControl('u', 'i', 'o', 'p');
         inputSystem.addControl('j', () -> {
             try {
-                entityManager.getComponent(paddle2, Input.class).setDirection(90);
+                entityManager.getComponent(paddle2, Physics.class).addForce(new Point2D.Double(0, 1));
             } catch (NonExistentEntityException e) {
                 e.printStackTrace();
             }
@@ -91,21 +92,21 @@ public class Main extends JFrame {
             double paddleWidth = renderSystem.getGamePanel().getWidth() * 0.011;
             double paddleHeight = renderSystem.getGamePanel().getHeight() * 0.1;
             double paddleY = (renderSystem.getGamePanel().getHeight() - paddleHeight) / 2;
-            double ballDiamater = 15;
+            double ballDiameter = 14;
             double ballSpeed = 10;
 
             Point2D.Double paddle1Location = new Point2D.Double(WALL_BUFFER_SPACE, paddleY);
             Point2D.Double paddle2Location = new Point2D.Double(
                     renderSystem.getGamePanel().getWidth() - paddleWidth - WALL_BUFFER_SPACE, paddleY);
-            Point2D.Double ballLocation = new Point2D.Double((renderSystem.getGamePanel().getWidth() - ballDiamater) / 2,
-                    (renderSystem.getGamePanel().getHeight() - ballDiamater) / 2);
+            Point2D.Double ballLocation = new Point2D.Double((renderSystem.getGamePanel().getWidth() - ballDiameter) / 2,
+                    (renderSystem.getGamePanel().getHeight() - ballDiameter) / 2);
 
             entityManager.addComponent(paddle1, new Renderable(new Rectangle(
                     paddle1Location, paddleWidth, paddleHeight, Color.WHITE)));
             entityManager.addComponent(paddle2, new Renderable(new Rectangle(
                     paddle2Location, paddleWidth, paddleHeight, Color.WHITE)));
             entityManager.addComponent(ball, new Renderable(new Circle(
-                    ballLocation, ballDiamater, Color.WHITE)));
+                    ballLocation, ballDiameter, Color.WHITE)));
 
             entityManager.addComponent(paddle1, new Physics(paddle1Location));
             entityManager.addComponent(paddle2, new Physics(paddle2Location));
@@ -121,6 +122,7 @@ public class Main extends JFrame {
     public void processOneGameTick(double lastFrameTime) {
         inputSystem.processOneGameTick(entityManager, lastFrameTime);
         physicsSystem.processOneGameTick(entityManager, lastFrameTime);
+        collisionSystem.processOneGameTick(entityManager, lastFrameTime);
         renderSystem.processOneGameTick(entityManager, lastFrameTime);
     }
 

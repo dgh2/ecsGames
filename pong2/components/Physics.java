@@ -16,10 +16,9 @@ public class Physics implements Component {
 
     public void integrate(double timestep) {
         Point2D.Double old_acceleration = acceleration;
-        Point2D.Double newLocation = vectorAddition(
+        location.setLocation(vectorAddition(
                 vectorAddition(location, vectorScaling(velocity, timestep)),
-                vectorScaling(old_acceleration, Math.pow(timestep, 2) / 2));
-        location.setLocation(newLocation.getX(), newLocation.getY());
+                vectorScaling(old_acceleration, Math.pow(timestep, 2) / 2)));
         acceleration = vectorScaling(force, 1 / mass);
         force = new Point2D.Double();
         velocity = vectorAddition(velocity, vectorScaling(vectorAddition(old_acceleration, old_acceleration), timestep / 2));
